@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Astra Browser - Navegación Pura</title>
+    <meta name="description" content="Descarga Astra Browser. Minimalismo, velocidad e Inteligencia Artificial local.">
+    
+    <!-- Fuente Inter (Misma que la App) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Iconos Phosphor -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        :root {
+            /* --- PALETA EXACTA DE ASTRA (browser.py) --- */
+            --app-bg-header: #dee9f9;     /* Fondo superior de la ventana */
+            --app-bg-white: #ffffff;      /* Pestañas activas y contenido */
+            --app-text-main: #1f1f1f;
+            --app-text-dim: #5f6368;
+            --app-primary: #000000;       /* Botones principales */
+            --app-url-bg: #f1f3f4;
+            --app-traffic-red: #FF5F56;
+            --app-traffic-yellow: #FFBD2E;
+            --app-traffic-green: #27C93F;
+            
+            /* Variables Web */
+            --web-bg: #f4f7fc;
+            --web-accent: #3b82f6; 
+            --shadow-window: 0 25px 80px -15px rgba(50, 50, 93, 0.15), 0 15px 40px -20px rgba(0, 0, 0, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--web-bg);
+            color: var(--app-text-main);
+            overflow-x: hidden;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- NAVBAR --- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 6%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 22px;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--app-text-main);
+            text-decoration: none;
+        }
+
+        /* Icono SVG Astra */
+        .logo svg {
+            width: 28px;
+            height: 28px;
+            color: var(--app-text-main);
+        }
+
+        .nav-links {
+            display: none; /* Oculto en móvil por defecto */
+            gap: 40px;
+            list-style: none;
+        }
+
+        @media(min-width: 768px) { .nav-links { display: flex; } }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--app-text-dim);
+            font-weight: 500;
+            font-size: 15px;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover { color: var(--app-text-main); }
+
+        .btn-nav-dl {
+            background-color: var(--app-primary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 99px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: opacity 0.2s;
+        }
+        .btn-nav-dl:hover { opacity: 0.85; }
+
+        /* --- HERO --- */
+        .hero {
+            text-align: center;
+            padding: 80px 20px 60px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 56px;
+            font-weight: 800;
+            letter-spacing: -2.5px;
+            line-height: 1.05;
+            margin-bottom: 24px;
+            color: var(--app-text-main);
+        }
+
+        p.hero-text {
+            font-size: 20px;
+            color: var(--app-text-dim);
+            line-height: 1.6;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-group {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 80px;
+        }
+
+        .btn-primary {
+            background-color: var(--app-primary);
+            color: white;
+            padding: 16px 36px;
+            border-radius: 99px;
+            font-weight: 600;
+            font-size: 17px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+
+        .btn-secondary {
+            background-color: white;
+            color: var(--app-text-main);
+            padding: 16px 36px;
+            border-radius: 99px;
+            font-weight: 600;
+            font-size: 17px;
+            text-decoration: none;
+            border: 1px solid rgba(0,0,0,0.1);
+            transition: background 0.2s;
+        }
+
+        .btn-secondary:hover { background-color: #fcfcfc; border-color: rgba(0,0,0,0.2); }
+
+        /* --- MOCKUP DE LA APP (PIXEL PERFECT A BROWSER.PY) --- */
+        .mockup-container {
+            max-width: 1080px;
+            margin: 0 auto 120px;
+            padding: 0 20px;
+            perspective: 1200px;
+        }
+
+        .app-window {
+            background-color: var(--app-bg-header); /* #dee9f9 */
+            border-radius: 12px;
+            box-shadow: var(--shadow-window);
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.08);
+            transform: rotateX(2deg);
+            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+            position: relative;
+        }
+        
+        .app-window:hover { transform: rotateX(0deg) translateY(-10px); }
+
+        /* Fila Superior (Top Row) */
+        .app-header {
+            height: 44px;
+            display: flex;
+            align-items: flex-end; /* Pestañas abajo */
+            padding-left: 20px;
+            padding-right: 10px;
+            gap: 16px;
+        }
+
+        .traffic-dots {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 14px; /* Centrado verticalmente aprox */
+        }
+        .dot { width: 12px; height: 12px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.1); }
+        .red { background: var(--app-traffic-red); }
+        .yellow { background: var(--app-traffic-yellow); }
+        .green { background: var(--app-traffic-green); }
+
+        /* Pestañas */
+        .tabs-area {
+            display: flex;
+            align-items: flex-end;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .tab {
+            height: 38px;
+            padding: 0 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            margin-right: 6px;
+            cursor: default;
+            transition: background 0.2s;
+            position: relative;
+        }
+
+        /* Pestaña Activa: Blanca, conectada al nav-bar */
+        .tab.active {
+            background-color: var(--app-bg-white);
+            color: var(--app-text-main);
+            font-weight: 600;
+            z-index: 10;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.03);
+        }
+
+        /* Truco visual para esquinas de pestaña activa (como en CSS original) */
+        .tab.active::before, .tab.active::after {
+            content: ''; position: absolute; bottom: 0; width: 10px; height: 10px; pointer-events: none;
+        }
+        .tab.active::before { left: -10px; background: radial-gradient(circle at 0 0, transparent 10px, white 10.5px); }
+        .tab.active::after { right: -10px; background: radial-gradient(circle at 100% 0, transparent 10px, white 10.5px); }
+
+        .tab.inactive {
+            color: var(--app-text-dim);
+        }
+        .tab.inactive:hover {
+            background-color: rgba(0,0,0,0.04);
+            color: var(--app-text-main);
+        }
+
+        .tab-favicon {
+            width: 14px; height: 14px; 
+            background: #ccc; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 8px; color: white;
+        }
+        .tab-close { opacity: 0.4; font-size: 14px; margin-left: auto; }
+
+        /* Barra de Navegación (Nav Row) */
+        .app-nav {
+            height: 52px;
+            background-color: var(--app-bg-white);
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            border-bottom: 1px solid #f0f0f0;
+            position: relative;
+            z-index: 5;
+        }
+
+        .nav-controls {
+            display: flex;
+            gap: 4px;
+            margin-right: 12px;
+            color: var(--app-text-dim);
+        }
+        .nav-btn {
+            width: 34px; height: 34px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px;
+        }
+        .nav-btn:hover { background: rgba(0,0,0,0.04); color: var(--app-text-main); }
+
+        /* Barra URL */
+        .url-bar {
+            flex: 1;
+            height: 36px;
+            background-color: var(--app-url-bg);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            font-size: 14px;
+            color: var(--app-text-main);
+            transition: background 0.2s;
+        }
+        .url-bar:hover { background-color: #ebeded; }
+        
+        .url-lock { color: var(--app-text-dim); margin-right: 8px; font-size: 14px; }
+        .url-text { flex: 1; outline: none; border: none; background: transparent; }
+
+        /* Contenido de la App */
+        .app-content {
+            height: 500px;
+            background-color: white;
+            display: flex;
+            position: relative;
+        }
+
+        /* Sidebar de Astra AI (Simulado) */
+        .ai-sidebar {
+            width: 320px;
+            border-left: 1px solid #eee;
+            background: #f5fbff; /* Color exacto del sidebar en browser.py */
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            position: absolute;
+            right: 0; top: 0; bottom: 0;
+            z-index: 2;
+        }
+
+        .ai-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .msg-bubble {
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            line-height: 1.5;
+            max-width: 90%;
+        }
+
+        .msg-ai {
+            background: white;
+            border: 1px solid #e0e6ed;
+            color: var(--app-text-main);
+            border-top-left-radius: 2px;
+        }
+        
+        .msg-user {
+            background: #e8f0f9;
+            color: var(--app-text-main);
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+
+        /* Página Principal (Main View) */
+        .main-view {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding-bottom: 80px;
+            padding-right: 320px; /* Espacio para el sidebar */
+        }
+
+        .main-title {
+            font-size: 56px;
+            font-weight: 600;
+            color: var(--app-text-main);
+            margin-bottom: 30px;
+            letter-spacing: -2px;
+        }
+
+        .search-box {
+            width: 480px;
+            height: 50px;
+            border-radius: 25px;
+            border: 1px solid #dfe1e5;
+            background: white;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            box-shadow: 0 1px 6px rgba(32, 33, 36, 0.1);
+            color: var(--app-text-dim);
+            font-size: 16px;
+        }
+
+        /* --- FEATURES GRID --- */
+        .features {
+            background: white;
+            padding: 100px 20px;
+        }
+        
+        .features-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 60px;
+        }
+
+        .feat-item h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .feat-item p { color: var(--app-text-dim); font-size: 16px; }
+        .feat-icon {
+            font-size: 28px;
+            color: var(--app-text-main);
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            padding: 60px 20px;
+            text-align: center;
+            color: var(--app-text-dim);
+            font-size: 14px;
+            background: #f8faff;
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+
+        /* Animación suave de entrada */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .hero { animation: fadeIn 0.8s ease-out; }
+        .mockup-container { animation: fadeIn 1s ease-out 0.2s backwards; }
+
+        @media (max-width: 900px) {
+            h1 { font-size: 42px; }
+            .ai-sidebar { display: none; } /* Ocultar sidebar en mockup móvil para que se vea la búsqueda */
+            .main-view { padding-right: 0; }
+            .search-box { width: 90%; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="#" class="logo">
+            <!-- Icono "Astra" SVG Personalizado -->
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2L1 21h22L12 2zm0 3.8l7.2 12.2H4.8L12 5.8z"/>
+                <circle cx="12" cy="14" r="2.5" />
+            </svg>
+            Astra
+        </a>
+        <ul class="nav-links">
+            <li><a href="#about">Acerca de</a></li>
+            <li><a href="#features">Tecnología</a></li>
+            <li><a href="#privacy">Privacidad</a></li>
+        </ul>
+        <a href="#" onclick="descargar()" class="btn-nav-dl">Descargar v16.0</a>
+    </nav>
+
+    <section class="hero">
+        <h1>Tu navegador.<br>Tu Inteligencia.</h1>
+        <p class="hero-text">
+            Astra es el navegador ligero que integra un agente de IA localmente. 
+            Navega, resume y automatiza tareas sin que tus datos salgan de tu ordenador.
+        </p>
+        <div class="cta-group">
+            <a href="#" onclick="descargar()" class="btn-primary">
+                <i class="ph-bold ph-download-simple"></i>
+                Descargar Windows
+            </a>
+            <a href="#features" class="btn-secondary">Saber más</a>
+        </div>
+    </section>
+
+    <!-- MOCKUP PIXEL PERFECT -->
+    <div class="mockup-container">
+        <div class="app-window">
+            
+            <!-- 1. Header Azulado (#dee9f9) -->
+            <div class="app-header">
+                <div class="traffic-dots">
+                    <div class="dot red"></div>
+                    <div class="dot yellow"></div>
+                    <div class="dot green"></div>
+                </div>
+                
+                <div class="tabs-area">
+                    <!-- Pestaña inactiva -->
+                    <div class="tab inactive">
+                        <div class="tab-favicon" style="background:#555">G</div>
+                        Google
+                        <i class="ph ph-x tab-close"></i>
+                    </div>
+                    <!-- Pestaña Activa (Fondo blanco #fff) -->
+                    <div class="tab active">
+                        <div class="tab-favicon" style="background: linear-gradient(135deg, #4facfe, #00f2fe);"></div>
+                        Nueva Pestaña
+                        <i class="ph ph-x tab-close"></i>
+                    </div>
+                    <div class="nav-btn" style="width: 28px; height: 28px; margin-bottom: 4px;">
+                        <i class="ph-bold ph-plus" style="font-size: 14px;"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Nav Bar Blanca (#fff) -->
+            <div class="app-nav">
+                <div class="nav-controls">
+                    <div class="nav-btn"><i class="ph ph-arrow-left"></i></div>
+                    <div class="nav-btn"><i class="ph ph-arrow-right"></i></div>
+                    <div class="nav-btn"><i class="ph ph-arrow-clockwise"></i></div>
+                </div>
+                <div class="url-bar">
+                    <i class="ph-fill ph-lock-key url-lock"></i>
+                    <span style="color: #999;">Buscar en Astra o escribir URL...</span>
+                </div>
+                <div style="display: flex; gap: 8px; margin-left: 12px;">
+                    <div class="nav-btn"><i class="ph ph-user"></i></div>
+                    <div class="nav-btn"><i class="ph ph-dots-three-vertical"></i></div>
+                </div>
+            </div>
+
+            <!-- 3. Contenido (Blanco) -->
+            <div class="app-content">
+                
+                <!-- Vista Principal (Buscador) -->
+                <div class="main-view">
+                    <div class="main-title">Astra</div>
+                    <div class="search-box">
+                        <i class="ph ph-magnifying-glass" style="margin-right: 12px;"></i>
+                        Pregunta lo que quieras...
+                    </div>
+                </div>
+
+                <!-- Sidebar IA (#f5fbff) -->
+                <div class="ai-sidebar">
+                    <div class="ai-header">
+                        <span>Astra AI</span>
+                        <i class="ph ph-x" style="cursor: pointer; opacity: 0.5;"></i>
+                    </div>
+                    <div class="chat-area">
+                        <div class="msg-bubble msg-ai">
+                            Hola, estoy listo. ¿Qué quieres buscar hoy?
+                        </div>
+                        <div class="msg-bubble msg-user">
+                            Resúmeme las noticias de tecnología.
+                        </div>
+                        <div class="msg-bubble msg-ai">
+                            <span style="font-weight: 600; font-size: 11px; text-transform: uppercase; color: #666; display: block; margin-bottom: 4px;">Pensando...</span>
+                            Analizando fuentes principales...
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <section id="features" class="features">
+        <div class="features-container">
+            <div class="feat-item">
+                <i class="ph-duotone ph-cpu feat-icon"></i>
+                <h3>IA Local Qwen</h3>
+                <p>El motor de inteligencia artificial corre directamente en tu CPU. Privacidad total sin enviar tus consultas a la nube.</p>
+            </div>
+            <div class="feat-item">
+                <i class="ph-duotone ph-lightning feat-icon"></i>
+                <h3>Motor PyQt6</h3>
+                <p>Una interfaz ultraligera escrita en Python que elimina el consumo excesivo de RAM típico de otros navegadores.</p>
+            </div>
+            <div class="feat-item">
+                <i class="ph-duotone ph-paint-brush feat-icon"></i>
+                <h3>Diseño Zen</h3>
+                <p>Sin notificaciones molestas ni pop-ups. Solo una barra de búsqueda y tus pestañas. El resto es espacio para ti.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p style="margin-bottom: 10px;">&copy; 2025 Astra Browser Project. Open Source.</p>
+        <p style="opacity: 0.6;">Hecho con Python. Construido para humanos.</p>
+    </footer>
+
+    <script>
+        function descargar() {
+            // Generar enlace falso para el instalador
+            const text = "Simulación: Descargando Astra_Setup_v16.exe ...\n\n(Asegúrate de compilar tu script de Python para tener el .exe real)";
+            const blob = new Blob([text], {type: 'text/plain'});
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Astra_Setup_v16.txt'; // Cambiar a .exe en producción
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            alert("Gracias por descargar Astra. (Simulación)");
+        }
+    </script>
+</body>
+</html>
